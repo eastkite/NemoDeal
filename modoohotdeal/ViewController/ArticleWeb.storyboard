@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Article Web View Controller-->
+        <scene sceneID="izh-tq-4lW">
+            <objects>
+                <viewController storyboardIdentifier="ArticleWebViewController" id="cIF-9S-Qv6" customClass="ArticleWebViewController" customModule="modoohotdeal" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qNg-fl-cPK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="m2d-XG-yF4">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="wTs-D9-ben">
+                                <rect key="frame" x="157.5" y="303.5" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="6t7-Dj-1kN"/>
+                                    <constraint firstAttribute="height" constant="60" id="xRp-IN-LDK"/>
+                                </constraints>
+                                <color key="color" red="0.20341930650684931" green="0.3516695205479452" blue="0.91235017123287676" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="m2d-XG-yF4" firstAttribute="top" secondItem="qNg-fl-cPK" secondAttribute="top" id="0DV-oF-6q0"/>
+                            <constraint firstItem="wTs-D9-ben" firstAttribute="centerY" secondItem="qNg-fl-cPK" secondAttribute="centerY" id="D7o-xQ-rQv"/>
+                            <constraint firstAttribute="trailing" secondItem="m2d-XG-yF4" secondAttribute="trailing" id="EDf-ql-16b"/>
+                            <constraint firstItem="m2d-XG-yF4" firstAttribute="leading" secondItem="qNg-fl-cPK" secondAttribute="leading" id="GCy-zh-iDq"/>
+                            <constraint firstItem="wTs-D9-ben" firstAttribute="centerX" secondItem="qNg-fl-cPK" secondAttribute="centerX" id="cF9-f9-90a"/>
+                            <constraint firstAttribute="bottom" secondItem="m2d-XG-yF4" secondAttribute="bottom" id="hOn-sm-8Sv"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Ahp-ho-0i0"/>
+                    </view>
+                    <connections>
+                        <outlet property="container" destination="m2d-XG-yF4" id="88a-8g-Rqg"/>
+                        <outlet property="loadingIndicator" destination="wTs-D9-ben" id="IWQ-EJ-mfY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hvs-KA-rYY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="207" y="125"/>
+        </scene>
+    </scenes>
+</document>

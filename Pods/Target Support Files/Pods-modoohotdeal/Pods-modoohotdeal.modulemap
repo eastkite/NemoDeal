@@ -1,0 +1,6 @@
+framework module Pods_modoohotdeal {
+  umbrella header "Pods-modoohotdeal-umbrella.h"
+
+  export *
+  module * { export * }
+}
