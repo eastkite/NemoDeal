@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Modal Image View Controller-->
+        <scene sceneID="YZX-CE-BzF">
+            <objects>
+                <viewController storyboardIdentifier="ModalImageViewController" id="dbq-BS-HFq" customClass="ModalImageViewController" customModule="modoohotdeal" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="PnP-Ys-Pgs">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GHR-yy-eNI">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b1x-VV-ezG">
+                                <rect key="frame" x="15" y="20" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="eXi-p4-NWD"/>
+                                    <constraint firstAttribute="width" constant="44" id="vo3-uA-Pdf"/>
+                                </constraints>
+                                <state key="normal" image="back"/>
+                                <connections>
+                                    <action selector="dismissAction:" destination="dbq-BS-HFq" eventType="touchUpInside" id="8fs-wU-EwF"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="이미지 상세" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fEe-hu-9RL">
+                                <rect key="frame" x="146.5" y="32" width="82.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="fEe-hu-9RL" firstAttribute="centerX" secondItem="PnP-Ys-Pgs" secondAttribute="centerX" id="4yz-tc-S2e"/>
+                            <constraint firstItem="fEe-hu-9RL" firstAttribute="top" secondItem="rqw-C9-5XX" secondAttribute="top" constant="12" id="BGi-No-PSN"/>
+                            <constraint firstItem="b1x-VV-ezG" firstAttribute="top" secondItem="rqw-C9-5XX" secondAttribute="top" id="KT5-Ki-j5z"/>
+                            <constraint firstItem="rqw-C9-5XX" firstAttribute="trailing" secondItem="GHR-yy-eNI" secondAttribute="trailing" id="Loc-zT-BND"/>
+                            <constraint firstItem="GHR-yy-eNI" firstAttribute="leading" secondItem="rqw-C9-5XX" secondAttribute="leading" id="MN0-xM-Wcx"/>
+                            <constraint firstItem="rqw-C9-5XX" firstAttribute="bottom" secondItem="GHR-yy-eNI" secondAttribute="bottom" id="Sga-jc-cL0"/>
+                            <constraint firstItem="b1x-VV-ezG" firstAttribute="leading" secondItem="rqw-C9-5XX" secondAttribute="leading" constant="15" id="VJV-e5-RWm"/>
+                            <constraint firstItem="GHR-yy-eNI" firstAttribute="top" secondItem="rqw-C9-5XX" secondAttribute="top" constant="44" id="yXO-dn-OwR"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="rqw-C9-5XX"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="GHR-yy-eNI" id="kfi-Gd-939"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2WD-NN-FE0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-254" y="176"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="back" width="100" height="100"/>
+    </resources>
+</document>

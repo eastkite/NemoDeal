@@ -17,6 +17,7 @@ class ArticleWebViewController: UIViewController {
     
     var webView: WKWebView!
     private var url : URL!
+    var titleText = ""
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
@@ -27,14 +28,26 @@ class ArticleWebViewController: UIViewController {
     }
     
     func configure(){
-        self.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.2549019608, green: 0.7843137255, blue: 0.1764705882, alpha: 1)
+//        self.navigationController?.navigationBar.tintColor = #colorLiteral(red: 0.2549019608, green: 0.7843137255, blue: 0.1764705882, alpha: 1)
 //        webView = WKWebView.init(frame: self.view.frame)
+        self.title = titleText
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14)]
+        self.navigationItem.hidesBackButton = true
+        let image = #imageLiteral(resourceName: "back").resizeImage(size: CGSize(width: 35, height: 35))
+        image.withRenderingMode(.alwaysOriginal)
+        let leftButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(self.backTabAction))
+
+        leftButton.image = leftButton.image?.withRenderingMode(.alwaysOriginal)
+
+        self.navigationItem.leftBarButtonItem = leftButton
         
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
         let preferences = WKPreferences()
         preferences.javaScriptEnabled = true
+        
         let configuration = WKWebViewConfiguration()
-        configuration.preferences = preferences
+        configuration.preferences = preferences        
         
         webView = WKWebView(frame: view.bounds, configuration: configuration)
         container.addSubview(webView)
@@ -44,9 +57,15 @@ class ArticleWebViewController: UIViewController {
         
         guard self.url != nil else { return }
         
-        let request = URLRequest(url: self.url)
+        var request = URLRequest(url: self.url)
+        request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53", forHTTPHeaderField: "User-Agent")
         self.webView.load(request)
         
+        
+    }
+    
+    @objc func backTabAction(){
+        self.navigationController?.popViewController(animated: true)
     }
     
     func setURL(url : URL){
@@ -123,10 +142,16 @@ extension ArticleWebViewController : WKNavigationDelegate{
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         print("decidePolicyFor navigationAction : \(navigationAction)")
+        
         if navigationAction.navigationType == .linkActivated {
             guard let url = navigationAction.request.url else {return}
             sfvcCallRequest(url)
         }
+        if (navigationAction.request.url?.absoluteString.contains("google") ?? false) || (navigationAction.request.url?.absoluteString.contains("adex") ?? false){
+            decisionHandler(.cancel)
+            return
+        }
+        print("ad? decidePolicyFor navigationAction : \(navigationAction)")
         decisionHandler(.allow)
     }
     

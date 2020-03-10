@@ -37,19 +37,24 @@ class AdService: NSObject {
     var interstitialCloseHandler: (() -> Void)?
     var interstitialTimer : Timer?
     var isTenMinute : Bool = true
+    var count = 0
+    var keywordCount = 0
     
     // 네이티브 광고
     var adLoader: GADAdLoader!
-    var nativeAdView: GADUnifiedNativeAdView!
+    var nativeAdViewList: [Int : GADUnifiedNativeAdView] = [:]
     var heightConstraint : NSLayoutConstraint?
+    var nativeAdList : [GADUnifiedNativeAd] = []
     
     // 배너 광고
     var defaultImageView : UIImageView?
     
-    static let bannerAdId       = "ca-app-pub-6899587778873867/1658816390"
-    static let interstitialAdId = "ca-app-pub-6899587778873867/2447980427"
-    static let nativeAdId       = "ca-app-pub-6899587778873867/6973069860"
-    static let rewardAdId       = "ca-app-pub-6899587778873867/8749185968"
+    static let bannerAdId       = ""
+    static let interstitialAdId = //"ca-app-pub-3940256099942544/4411468910"//
+    "ca-app-pub-7541722331477577/5961722556"
+    static let nativeAdId       = //"ca-app-pub-3940256099942544/3986624511"//
+    "ca-app-pub-7541722331477577/8361349715"
+    static let rewardAdId       = ""
     
     let dispatchGroup = DispatchGroup()
     
@@ -65,7 +70,8 @@ class AdService: NSObject {
     
     func serviceInit(){
         self.interstitialAdInit()
-        self.rewardLoad()
+//        self.rewardLoad()
+        nativeAdLoad()
     }
     
 }
@@ -206,17 +212,29 @@ extension AdService : GADInterstitialDelegate {
     }
     
     func loadInterstitialAd(withHandler handler: @escaping (()->Void)) {
-        if isTenMinute {
+        count += 1
+        if count % 5 == 0{
             self.interstitialCloseHandler = handler
-            if let currentVC = UIApplication.shared.topViewController{
+            if let currentVC = UIApplication.shared.topViewController, interstitialView != nil{
                 interstitialView.present(fromRootViewController: currentVC)
+            }else{
+                self.interstitialCloseHandler!()
+                interstitialCloseHandler = nil
             }
-            
-            if let _ = interstitialTimer{}else{
-                interstitialTimer = Timer(timeInterval: 600, repeats: true, block: {[weak self] _ in
-                    guard let `self` = self else { return }
-                    self.isTenMinute = true
-                })
+        }else{
+            handler()
+        }
+    }
+    
+    func loadInterstitialAdFromKeyword(withHandler handler: @escaping (()->Void)) {
+        keywordCount += 1
+        if keywordCount % 3 == 0{
+            self.interstitialCloseHandler = handler
+            if let currentVC = UIApplication.shared.topViewController, interstitialView != nil{
+                interstitialView.present(fromRootViewController: currentVC)
+            }else{
+                self.interstitialCloseHandler!()
+                interstitialCloseHandler = nil
             }
         }else{
             handler()
@@ -272,50 +290,73 @@ extension AdService : GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate, GAD
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADUnifiedNativeAd) {
         
-        nativeAdView.nativeAd = nativeAd
         nativeAd.delegate = self
         nativeAd.mediaContent.videoController.delegate = self
-        
-        if let controller = nativeAd.videoController, controller.hasVideoContent() {
-            controller.delegate = self
+        nativeAdList.append(nativeAd)
+  
+        if nativeAdViewList.count > 0 {
+            setNativeAd()
         }
-        
-        (nativeAdView.headlineView as? UILabel)?.text = nativeAd.headline
-        nativeAdView.mediaView?.mediaContent = nativeAd.mediaContent
-        
-        (nativeAdView.bodyView as? UILabel)?.text = nativeAd.body
-        nativeAdView.bodyView?.isHidden = nativeAd.body == nil
-        
-        (nativeAdView.callToActionView as? UIButton)?.setTitle(nativeAd.callToAction, for: .normal)
-        nativeAdView.callToActionView?.isHidden = nativeAd.callToAction == nil
-        
-        (nativeAdView.iconView as? UIImageView)?.image = nativeAd.icon?.image
-        nativeAdView.iconView?.isHidden = nativeAd.icon == nil
-        
-        nativeAdView.callToActionView?.isUserInteractionEnabled = false
-        
-        (nativeAdView.advertiserView as? UILabel)?.text = nativeAd.advertiser
-        nativeAdView.advertiserView?.isHidden = nativeAd.advertiser == nil
+//        setNativeAd()
     }
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: GADRequestError) {
         
     }
     
-    func nativeAdInit(setAdView: GADUnifiedNativeAdView) {
-        
+    func nativeAdLoad(){
         adLoader = GADAdLoader(adUnitID: AdService.nativeAdId, rootViewController: UIApplication.shared.topViewController,
                                adTypes: [ .unifiedNative ], options: nil)
         adLoader.delegate = self
         adLoader.load(GADRequest())
+    }
+    
+    func setNativeAd(){
         
+        if let minkey = nativeAdViewList.keys.first , let adView = nativeAdViewList.removeValue(forKey: minkey){
+            let setAdView = adView
+            setAdView.nativeAd = nativeAdList.removeFirst()
+            let nativeAd = setAdView.nativeAd
+            
+            if let controller = nativeAd?.videoController, controller.hasVideoContent() {
+                controller.delegate = self
+            }
+            
+            Log.d("광고 셋팅 : \(minkey)")
+            
+            setAdView.mediaView?.mediaContent = nativeAd?.mediaContent
+            setAdView.mediaView?.isHidden = false
+            
+            (setAdView.bodyView as? UILabel)?.text =  nativeAd?.body
+            setAdView.bodyView?.isHidden = nativeAd?.body == nil
+            
+            (setAdView.headlineView as? UILabel)?.text = "[\(nativeAd?.headline ?? "")]"
+            setAdView.headlineView?.isHidden = nativeAd?.headline == nil
+            
+            //        (setAdView.callToActionView as? UIButton)?.setTitle(nativeAd?.callToAction, for: .normal)
+            //        setAdView.callToActionView?.isHidden = nativeAd?.callToAction == nil
+            
+            (setAdView.iconView as? UIImageView)?.image = nativeAd?.icon?.image
+            setAdView.iconView?.isHidden = nativeAd?.icon == nil
+            
+            setAdView.callToActionView?.isUserInteractionEnabled = false
+            
+            (setAdView.advertiserView as? UILabel)?.text = "[\(nativeAd?.advertiser ?? "")]"
+            setAdView.advertiserView?.isHidden = nativeAd?.advertiser == nil
+            
+            NotificationCenter.default.post(name: Notification.Name.init(rawValue: "adDidLoad"), object: nil, userInfo: ["row": minkey])
+            
+            if nativeAdList.count < 10{
+                nativeAdLoad()
+            }
+            
+        }
+    }
+    
+    func nativeAdInit(setAdView: GADUnifiedNativeAdView, row : Int) {
         
-        (setAdView.callToActionView as? UIButton)?.titleLabel?.adjustsFontSizeToFitWidth = true
-        (setAdView.callToActionView as? UIButton)?.titleLabel?.numberOfLines = 1
-        (setAdView.callToActionView as? UIButton)?.titleLabel?.minimumScaleFactor = 0.5
-        
-        nativeAdView = setAdView
-        
+        nativeAdViewList[row] = setAdView
+        nativeAdLoad()
     }
     
     func nativeAdDidRecordImpression(_ nativeAd: GADUnifiedNativeAd) {

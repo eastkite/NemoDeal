@@ -11,17 +11,20 @@ import Moya
 enum HotdealProvider {
     case hotdeal(dbTableIndex: Int, id: Int?)
     case dealList
+    case deleteArticle(dbId: Int, id: Int)
     case user(token: String)
     case getKeyword
     case registKeyword(keyword: String)
     case updateKeywordAlert(keyword: String, alert: Bool)
     case deleteKeyword(keyword: String)
+    case getMainContents(dbId: Int, articleId: Int)
+    case getSearchKeyword(keyword: String)
 }
 
 extension HotdealProvider : TargetType{
     var baseURL: URL {
         switch self {
-        case .hotdeal, .dealList:
+        case .hotdeal, .dealList, .getMainContents, .deleteArticle, .getSearchKeyword:
             return URL(string: Configuration.current.serviceApiServer + "/")!
         case .user, .getKeyword, .updateKeywordAlert, .registKeyword, .deleteKeyword:
             return URL(string: Configuration.current.serviceApiServer + "/user/")!
@@ -34,22 +37,28 @@ extension HotdealProvider : TargetType{
             return "hotdeal"
         case .dealList:
             return "hotdeal/list"
+        case .deleteArticle:
+            return "hotdeal/article"
         case .user:
             return "registId"
         case .getKeyword, .registKeyword, .updateKeywordAlert, .deleteKeyword:
             return "keyword"
+        case .getMainContents:
+            return "hotdeal/mainContent"
+        case .getSearchKeyword:
+            return "hotdeal/search"
         }
     }
     
     var method: Method {
         switch self {
-        case .hotdeal, .dealList, .user, .getKeyword:
+        case .hotdeal, .dealList, .getKeyword, .getMainContents, .getSearchKeyword:
             return .get
-        case .registKeyword:
+        case .registKeyword, .user:
             return .post
         case .updateKeywordAlert:
             return .put
-        case .deleteKeyword:
+        case .deleteKeyword, .deleteArticle:
             return .delete
         }
     }
@@ -66,6 +75,8 @@ extension HotdealProvider : TargetType{
             if let id = value.id{
                 param["id"] = id
             }
+            param["count"] = 40
+            param["containEnd"] = UserDefaults.standard.string(forKey: UserDefaultsKey.containEnd.rawValue)
         case let .user(value):
             param["fcmToken"] = value
             param["deviceId"] = UUIDService.default.uuid
@@ -85,6 +96,15 @@ extension HotdealProvider : TargetType{
         case let .deleteKeyword(value):
             param["userSeq"] = UserService.shared().user.seq
             param["keyword"] = value
+        case let .getMainContents(value):
+            param["dbId"] = value.dbId
+            param["articleId"] = value.articleId
+        case let .deleteArticle(value):
+            param["dbId"] = value.dbId
+            param["articleId"] = value.id
+        case let .getSearchKeyword(value):
+            param["key"] = value
+            param["containEnd"] = UserDefaults.standard.string(forKey: UserDefaultsKey.containEnd.rawValue)
         default: return .requestPlain
         }
         return .requestParameters(parameters: param, encoding: parameterEncodingForMethod())
@@ -104,6 +124,10 @@ extension HotdealProvider : TargetType{
             return [.hd_4001, .hd_4041]
         case .registKeyword:
             return [.hd_4042]
+        case .getMainContents:
+            return [.hd_4045]
+        case .getSearchKeyword:
+            return [.hd_4045]
         default:
             return nil
         }
@@ -130,6 +154,8 @@ extension HotdealProvider{
         case hd_4001 = "4001" // db 데이터 비정상
         case hd_4041 = "4041" // 테이블 지정 안하였을 경우
         case hd_4042 = "4042" // 데이터 중복
+        
+        case hd_4045 = "4045" // 데이터 없음 (본문 내용 없음)
         
         var code: String {
             if let index = rawValue.index(of: "_") {

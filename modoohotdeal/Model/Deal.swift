@@ -10,6 +10,7 @@ import Foundation
 
 struct Deal: Codable {
     // 서버 데이터
+    let siteId : Int
     let siteIcon : String
     let id : Int
     let title : String
@@ -21,13 +22,15 @@ struct Deal: Codable {
     let end : Bool
     let thumbnail : String?
     let regDate : Date?
-    var adUser : Bool
+    var adUse : Bool
+    
     
     // 사용할 데이터
     var dayString : String?
     var timeString : String?
     
     enum CodingKeys: String, CodingKey{
+        case siteId
         case siteIcon
         case id = "articleId"
         case title
@@ -41,8 +44,25 @@ struct Deal: Codable {
         case regDate
     }
     
+    init() {
+        siteId = -1
+        siteIcon = ""
+        id = -1
+        title = ""
+        comment = -1
+        category = ""
+        recommend = -1
+        decommend = -1
+        url = ""
+        end = false
+        thumbnail = ""
+        regDate = nil
+        adUse = true
+    }
+    
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
+        siteId = try values.decode(Int.self, forKey: .siteId)
         siteIcon = try values.decode(String.self, forKey: .siteIcon)
         id = try values.decode(Int.self, forKey: .id)
         title = try values.decode(String.self, forKey: .title)
@@ -60,8 +80,7 @@ struct Deal: Codable {
         formatter.locale = Locale(identifier: "ko_KR")
         regDate = formatter.date(from: dateString)!
         
-        let ran = Int.random(in: (0 ..< 4))
-        adUser = ran == 2
+        adUse = false
     }
 }
 

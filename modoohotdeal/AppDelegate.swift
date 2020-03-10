@@ -31,8 +31,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+        AdService.shared()
         Messaging.messaging().delegate = self
         Messaging.messaging().isAutoInitEnabled = true
+//        Messaging.messaging().subscribe(toTopic: "")
+        Thread.sleep(forTimeInterval: 1.0)
         return true
     }
 
@@ -63,12 +66,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 extension AppDelegate : MessagingDelegate {
+    
     // [START refresh_token]
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         print("didReceiveRegistrationToken : fcmToken = \(fcmToken)")
         _ = NetworkService.User.postUser(token: fcmToken).on(next: {
             UserService.shared().setUser(userData: $0)
         })
+        
 //        Preference.fcm.set(fcmToken, forKey: .fcmToken)
     }
     // [END refresh_token]
@@ -140,9 +145,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         print("didReceive : \(userInfo)")
         
-        guard let link = userInfo["link"] as? String, let url = URL(string: link) else { return }
+//        guard let link = userInfo["link"] as? String, let url = URL(string: link) else { return }
         guard let code = userInfo["code"] as? String else { return }
         guard let title = userInfo["title"] as? String , let body = userInfo["body"] as? String else {
+            return
+        }
+        guard let aticleIdString = userInfo["articleId"] as? String, let articleId = Int(aticleIdString) else {
+            return
+        }
+        
+        guard let siteIdString = userInfo["site"] as? String, let site = Int(siteIdString) else {
             return
         }
         
@@ -150,8 +162,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             AlertService.shared().alertInit(title: title, message: body, preferredStyle: .alert)
                 .addAction(title: "닫기", style: .cancel)
                 .addAction(title: "보러 가기", style: .default) {alert in
-                    let vc = UIStoryboard(name: "ArticleWeb", bundle: .main).instantiateViewController(withIdentifier: "ArticleWebViewController") as! ArticleWebViewController
-                    vc.setURL(url: url)
+//                    let vc = UIStoryboard(name: "ArticleWeb", bundle: .main).instantiateViewController(withIdentifier: "ArticleWebViewController") as! ArticleWebViewController
+//                    vc.setURL(url: url)
+//                    vc.titleText = body
+                    
+                    let vc = UIStoryboard(name: "ArticleMain", bundle: .main).instantiateViewController(withIdentifier: "ArticleViewController") as! ArticleViewController
+                    vc.articleId = articleId
+                    
+                    vc.titleText = body
+                    vc.site = site
+                    
+                    UIApplication.shared.topViewController?.navigationController?.popToRootViewController(animated: false)
                     UIApplication.shared.topViewController?.navigationController?.pushViewController(vc, animated: true)
                 }.showAlert()
         }

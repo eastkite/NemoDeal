@@ -13,7 +13,7 @@
         <!--Article Web View Controller-->
         <scene sceneID="izh-tq-4lW">
             <objects>
-                <viewController storyboardIdentifier="ArticleWebViewController" id="cIF-9S-Qv6" customClass="ArticleWebViewController" customModule="modoohotdeal" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ArticleWebViewController" automaticallyAdjustsScrollViewInsets="NO" id="cIF-9S-Qv6" customClass="ArticleWebViewController" customModule="modoohotdeal" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qNg-fl-cPK">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

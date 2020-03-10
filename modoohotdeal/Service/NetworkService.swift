@@ -30,10 +30,20 @@ extension NetworkService{
         /// 서비스 중인 사이트의 id 및 제일 밑의 article id를 입력한다.
         /// id가 없으면 최신의 20개를 내려주며
         /// id가 있으면 그 id보다 낮은 id의 article 20개를 내려준다
-        static func getHotDeal(site: Int, id: Int? = nil) -> Observable<([Deal], Int)>{
-            return request(.hotdeal(dbTableIndex: site, id: id)).flatMap({
-                Observable.just(($0, site))
-            })
+        static func getHotDeal(site: Int, id: Int? = nil) -> Observable<[Deal]>{
+            return request(.hotdeal(dbTableIndex: site, id: id))
+        }
+        
+        static func getContents(site: Int, articleId: Int) -> Observable<ArticleContent>{
+            return request(.getMainContents(dbId: site, articleId: articleId))
+        }
+        
+        static func deleteArticle(site: Int, articleId: Int) -> Observable<EmptyModel>{
+            return request(.deleteArticle(dbId: site, id: articleId))
+        }
+        
+        static func getSearch(withKeyword keyword:String) -> Observable<[Deal]>{
+            return request(.getSearchKeyword(keyword: keyword))
         }
     }
     

@@ -155,7 +155,7 @@ extension Log {
     ///   - line:     라인
     static func d(_ message: @autoclosure () -> Any, _ file: String = #file, _ function: String = #function, _ line: Int = #line) {
         #if DEBUG
-        Log.Destination.console.write(.debug, file, function, line, message())
+        //Log.Destination.console.write(.debug, file, function, line, message())
         #endif
     }
     

@@ -21,7 +21,7 @@ struct UUIDService {
     var uuid: String {
         guard let uuid = keychain.get(key) else {
             let newUUID = UUID().uuidString
-            keychain.set(newUUID, forKey: key, withAccess: .accessibleWhenPasscodeSetThisDeviceOnly)
+            keychain.set(newUUID, forKey: key, withAccess: .accessibleAlwaysThisDeviceOnly)
             return newUUID
         }
         return uuid
